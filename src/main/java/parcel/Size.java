@@ -1,13 +1,15 @@
 package parcel;
 
-public enum Size {
-    SMALL(6.0),
-    MEDIUM(12.5),
-    LARGE(25.0);
+import java.math.BigDecimal;
 
-    public final Double cost;
+public enum Size implements Comparable<Size>{
+    SMALL(BigDecimal.valueOf(6)),
+    MEDIUM(BigDecimal.valueOf(12.5)),
+    LARGE(BigDecimal.valueOf(25.0));
 
-    private Size(Double cost) {
+    public final BigDecimal cost;
+
+    Size(BigDecimal cost) {
         this.cost = cost;
     }
 }

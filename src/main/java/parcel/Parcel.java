@@ -5,8 +5,8 @@ import lombok.Getter;
 import payment.AdditionalService;
 import payment.Payment;
 import storage.ParcelLocker;
-import storage.StoragePlace;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +14,16 @@ import java.util.UUID;
 
 @Getter
 public class Parcel {
-    private UUID id;
-    private Size size;
-    private Instant actualDeliveryTime;
-    private Instant guaranteedDeliveryTime;
+    private final UUID id;
+    private final Size size;
+    private final Instant actualDeliveryTime;
+    private final Instant guaranteedDeliveryTime;
     private Instant actualPickupTime;
-    private StoragePlace storagePlace;
-    private ParcelLocker senderLocker;
-    private ParcelLocker receiverLocker;
-    private Payment payment;
-    private List<AdditionalService> additionalServices;
-    private List<Event> events;
+    private final ParcelLocker senderLocker;
+    private final ParcelLocker receiverLocker;
+    private final Payment payment;
+    private final List<AdditionalService> additionalServices;
+    private final List<Event> events;
 
     public Parcel(
         Size size,
@@ -37,15 +36,14 @@ public class Parcel {
         actualDeliveryTime = null;
         guaranteedDeliveryTime = Instant.now().plusSeconds(60 * 60 * 24 * 2);
         actualPickupTime = null;
-        storagePlace = null;
         this.senderLocker = senderLocker;
         this.receiverLocker = receiverLocker;
         this.additionalServices = additionalServices;
-        events = new ArrayList<Event>();
+        events = new ArrayList<>();
         payment = new Payment(calculateValue());
     }
 
-    public Boolean makePayment(Double paidValue) {
+    public boolean makePayment(BigDecimal paidValue) {
         return payment.pay(paidValue);
     }
 
@@ -53,7 +51,12 @@ public class Parcel {
         return null;
     }
 
-    private Double calculateValue() {
-        return size.cost + additionalServices.stream().mapToDouble(a -> a.getCost()).sum();
+    private BigDecimal calculateValue() {
+        return size.cost.add(BigDecimal.valueOf(additionalServices.stream()
+                .mapToDouble(AdditionalService::getCost).sum()));
+    }
+
+    public void addEvent(Event event) {
+        events.add(event);
     }
 }

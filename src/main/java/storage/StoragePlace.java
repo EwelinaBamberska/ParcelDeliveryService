@@ -1,6 +1,9 @@
 package storage;
 
+import parcel.Parcel;
+
 public interface StoragePlace {
 
-    void storagePlace();
+    Parcel storeParcel(Parcel parcel);
+    boolean isEmpty();
 }

@@ -1,20 +1,31 @@
 package storage;
 
 import event.Event;
+import event.EventType;
+import lombok.Getter;
 import parcel.Parcel;
+import parcel.Size;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 public class ParcelLocker {
 
-    private Integer id;
+    @Getter
+    private final int id;
     private String physicalAddress;
-    private List<Event> last7DaysHistory;
-    private List<Module> modules;
+    private final List<Event> history;
+    private final List<Module> modules;
+
+    public ParcelLocker(int id, String physicalAddress, Collection<Module> modules) {
+        this.id = id;
+        this.physicalAddress = physicalAddress;
+        this.history = new LinkedList<>();
+        this.modules = new ArrayList<>(modules);
+    }
 
     public List<Event> getHistory() {
-        return last7DaysHistory;
+        return history;
     }
 
     public Integer calculateExpectedOccupancy(Date date) {
@@ -27,12 +38,27 @@ public class ParcelLocker {
         return null;
     }
 
-    public Integer depositParcel(Parcel parcel) {
+    public UUID depositParcel(Parcel parcel) {
+        Slot slot = findSlotForParcelSize(parcel.getSize());
+        slot.storeParcel(parcel);
+        Event event = new Event(LocalDate.now(), slot, EventType.ARRIVAL, parcel.getId());
+        history.add(event);
+        parcel.addEvent(event);
 
-        return null;
+        return parcel.getId();
     }
 
-    public Parcel collectParcel(Integer id) {
+    private Slot findSlotForParcelSize(Size size) {
+        return modules.stream()
+                .filter(module -> module.getSize().equals(size))
+                .flatMap(module -> module.getSlots().stream())
+                .sorted(Comparator.comparing(Slot::getSize))
+                .filter(Slot::isEmpty)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("There is no empty slot for given size"));
+    }
+
+    public Parcel collectParcel(int id) {
 
         return null;
     }

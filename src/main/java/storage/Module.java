@@ -1,21 +1,33 @@
 package storage;
 
+import lombok.Getter;
 import parcel.Size;
 
-import java.util.List;
+import java.util.*;
 
 public class Module {
 
-    private Size size;
-    private List<Slot> slots;
-    private ParcelLocker parcelLocker;
+    @Getter
+    private final int id;
+    @Getter
+    private final Size size;
+    private final Map<Integer, Slot> slots;
 
-    public Slot getSlot() {
+    public Module(int id, Size size, int numberOfSlots) {
+        this.id = id;
+        this.size = size;
+        slots = new HashMap<>(numberOfSlots);
+        for (int i=0; i<numberOfSlots; i++)
+        {
+            slots.put(i, new Slot(i, size));
+        }
+    }
 
-        return null;
+    public Slot getSlot(int id) {
+        return slots.get(id);
     }
 
     public List<Slot> getSlots() {
-        return slots;
+        return Collections.unmodifiableList(new ArrayList<>(slots.values()));
     }
 }

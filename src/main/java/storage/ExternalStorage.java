@@ -1,25 +1,43 @@
 package storage;
 
-import event.Event;
 import parcel.Parcel;
 
-import java.util.List;
+import java.util.*;
 
-public class ExternalStorage implements StoragePlace {
+public class ExternalStorage implements MultiplePackagesStoragePlace {
 
-    private List<Parcel> storedParcels;
+    private final Map<UUID, Parcel> storedParcels;
+
+    public ExternalStorage() {
+        this.storedParcels = new HashMap<>();
+    }
 
     @Override
-    public void storagePlace() {
-
+    public Parcel storeParcel(Parcel parcel) {
+        return storedParcels.put(parcel.getId(), parcel);
     }
 
-    public void destroyParcel() {
-
+    @Override
+    public Parcel pickUpParcel(UUID parcelId) {
+        return storedParcels.remove(parcelId);
     }
 
-    public Parcel getParcel() {
+    @Override
+    public Parcel getParcel(UUID parcelId) {
+        return storedParcels.get(parcelId);
+    }
 
-        return null;
+    @Override
+    public boolean isEmpty() {
+        return storedParcels.isEmpty();
+    }
+
+    @Override
+    public List<Parcel> getAllParcels() {
+        return new ArrayList<>(storedParcels.values());
+    }
+
+    public boolean destroyParcel(UUID parcelId) {
+        return storedParcels.remove(parcelId) != null;
     }
 }

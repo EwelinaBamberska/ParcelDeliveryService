@@ -1,21 +1,24 @@
 package user_portal;
 
-import parcel.Size;
 import event.Event;
 import parcel.Parcel;
+import parcel.Size;
 import payment.AdditionalService;
-import payment.Payment;
 import storage.ParcelLocker;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class UserPortal {
 
-    private final List<Parcel> parcels = new ArrayList<Parcel>();
+    private final List<Parcel> parcels;
+
+    public UserPortal() {
+        this.parcels = new ArrayList<>();
+    }
 
     public UUID registerParcel(
         ParcelLocker senderLocker,
@@ -32,15 +35,18 @@ public class UserPortal {
         return parcels;
     }
 
-    public Boolean makePayment(String parcelId, BigDecimal paidValue) {
-        return getParelById(parcelId).makePayment(paidValue);
+    public boolean makePayment(UUID parcelId, BigDecimal paidValue) {
+        return getParcelById(parcelId).makePayment(paidValue);
     }
 
-    public List<Event> getParcelEvents(String parcelId) {
-        return getParelById(parcelId).getEvents();
+    public List<Event> getParcelEvents(UUID parcelId) {
+        return getParcelById(parcelId).getEvents();
     }
 
-    private Parcel getParelById(String parcelId) {
-        return parcels.stream().filter(p -> p.getId().equals(parcelId)).findFirst().get();
+    private Parcel getParcelById(UUID parcelId) {
+        return parcels.stream()
+                .filter(p -> parcelId.equals(p.getId()))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("There is no parcel with id " + parcelId));
     }
 }
