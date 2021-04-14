@@ -4,7 +4,7 @@ import parcel.Parcel;
 
 import java.util.*;
 
-public class IntermediateStorage implements MultiplePackagesStoragePlace {
+public class IntermediateStorage implements StoragePlace {
 
     private final Map<UUID, Parcel> storedParcels;
 

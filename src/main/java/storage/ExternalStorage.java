@@ -4,7 +4,7 @@ import parcel.Parcel;
 
 import java.util.*;
 
-public class ExternalStorage implements MultiplePackagesStoragePlace {
+public class ExternalStorage implements StoragePlace {
 
     private final Map<UUID, Parcel> storedParcels;
 

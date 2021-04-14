@@ -4,7 +4,7 @@ import lombok.Getter;
 import parcel.Parcel;
 import parcel.Size;
 
-public class Slot implements StoragePlace {
+public class Slot {
 
     @Getter
     private final int id;
@@ -18,7 +18,6 @@ public class Slot implements StoragePlace {
         this.size = size;
     }
 
-    @Override
     public Parcel storeParcel(Parcel parcel) {
         if (isEmpty()) {
             if (parcel.getSize().compareTo(size) <= 0)

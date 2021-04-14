@@ -1,15 +1,17 @@
 package event;
 
+import lombok.Getter;
 import storage.StoragePlace;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
 public class Event {
-    private LocalDate time;
-    private StoragePlace storagePlace;
-    private EventType eventType;
-    private UUID parcelId;
+    private final LocalDate time;
+    private final StoragePlace storagePlace;
+    private final EventType eventType;
+    private final UUID parcelId;
 
     public Event(LocalDate time, StoragePlace storagePlace, EventType eventType, UUID parcelId) {
         this.time = time;
