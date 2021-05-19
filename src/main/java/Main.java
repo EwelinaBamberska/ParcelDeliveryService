@@ -45,12 +45,14 @@ public class Main {
 
         Parcel depositedParcel = new StoreParcelCommand(parcelLockerFirst, Action.Store, parcel).Execute().GetResult();
 
+        // tu będzie mediator
         Parcel depositedParcelToIntermediateStorage = new StoreParcelCommand(parcelLockerFirst, Action.PickUp, depositedParcel).Execute().GetResult();
         Parcel parcelInIntermediateStorage = new StoreParcelCommand(intermediateStorage, Action.Store, depositedParcelToIntermediateStorage).Execute().GetResult();
 
         Parcel parcelFromIntermediateStorage = new StoreParcelCommand(intermediateStorage, Action.PickUp, parcelInIntermediateStorage).Execute().GetResult();
         Parcel parcelInReceivingLocker = new StoreParcelCommand(parcelLockerSecond, Action.Store, parcelFromIntermediateStorage).Execute().GetResult();
-
+        // tu będzie mediator
+        
         Parcel parcelDelivered = new StoreParcelCommand(parcelLockerSecond, Action.PickUp, parcelInReceivingLocker).Execute().GetResult();
     }
 }
