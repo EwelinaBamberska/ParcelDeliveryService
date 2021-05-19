@@ -20,7 +20,7 @@ public class UserPortal {
         this.parcels = new ArrayList<>();
     }
 
-    public UUID registerParcel(
+    public Parcel registerParcel(
         ParcelLocker senderLocker,
         ParcelLocker receivingLocker,
         Size size,
@@ -28,7 +28,7 @@ public class UserPortal {
     ) {
         Parcel parcel = new Parcel(size, senderLocker, receivingLocker, additionalServices);
         parcels.add(parcel);
-        return parcel.getId();
+        return parcel;
     }
 
     public List<Parcel> getAllParcels() {

@@ -29,7 +29,7 @@ public class UserPortalTest {
     @Test
     void testRegisterParcel() {
         UUID firstParcelId = userPortal
-                .registerParcel(mock(ParcelLocker.class), mock(ParcelLocker.class), Size.MEDIUM, Collections.emptyList());
+                .registerParcel(mock(ParcelLocker.class), mock(ParcelLocker.class), Size.MEDIUM, Collections.emptyList()).getId();
 
         assertEquals(1, userPortal.getAllParcels().size());
         assertEquals(firstParcelId, userPortal.getAllParcels().get(0).getId());
@@ -43,7 +43,7 @@ public class UserPortalTest {
     @Test
     void testMakePayment() {
         UUID parcelId = userPortal
-                .registerParcel(mock(ParcelLocker.class), mock(ParcelLocker.class), Size.MEDIUM, Collections.emptyList());
+                .registerParcel(mock(ParcelLocker.class), mock(ParcelLocker.class), Size.MEDIUM, Collections.emptyList()).getId();
         boolean tooLowPayment = userPortal.makePayment(parcelId, Size.MEDIUM.cost.subtract(BigDecimal.valueOf(1)));
         boolean tooBigPayment = userPortal.makePayment(parcelId, Size.MEDIUM.cost.add(BigDecimal.valueOf(1)));
         boolean goodPayment = userPortal.makePayment(parcelId, Size.MEDIUM.cost);
