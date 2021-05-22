@@ -14,7 +14,8 @@ public class IntermediateStorage implements StoragePlace {
 
     @Override
     public Parcel storeParcel(Parcel parcel) {
-        return storedParcels.put(parcel.getId(), parcel);
+        storedParcels.put(parcel.getId(), parcel);
+        return parcel;
     }
 
     @Override
