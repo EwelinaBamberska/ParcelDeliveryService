@@ -1,5 +1,6 @@
 import commands.Action;
 import commands.StoreParcelCommand;
+import mediator.MediatorCourier;
 import parcel.Parcel;
 import parcel.Size;
 import payment.AdditionalService;
@@ -8,6 +9,7 @@ import storage.Module;
 import storage.ParcelLocker;
 import user_portal.UserPortal;
 
+import javax.print.attribute.standard.Media;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -23,14 +25,14 @@ public class Main {
 
         Collection<Module> parcelLockerFirstModule = new ArrayList<>();
         parcelLockerFirstModule.add(new Module(1, Size.LARGE, 5));
-        parcelLockerFirstModule.add(new Module(1, Size.MEDIUM, 10));
-        parcelLockerFirstModule.add(new Module(1, Size.SMALL, 20));
+        parcelLockerFirstModule.add(new Module(2, Size.MEDIUM, 10));
+        parcelLockerFirstModule.add(new Module(3, Size.SMALL, 20));
         ParcelLocker parcelLockerFirst = new ParcelLocker(1, "Lewego 4", parcelLockerFirstModule);
 
         Collection<Module> parcelLockerSecondModule = new ArrayList<>();
         parcelLockerSecondModule.add(new Module(1, Size.LARGE, 5));
-        parcelLockerSecondModule.add(new Module(1, Size.MEDIUM, 10));
-        parcelLockerSecondModule.add(new Module(1, Size.SMALL, 20));
+        parcelLockerSecondModule.add(new Module(2, Size.MEDIUM, 10));
+        parcelLockerSecondModule.add(new Module(3, Size.SMALL, 20));
         ParcelLocker parcelLockerSecond = new ParcelLocker(1, "Prawego 12", parcelLockerSecondModule);
 
         //Transit Register
@@ -45,14 +47,10 @@ public class Main {
 
         Parcel depositedParcel = new StoreParcelCommand(parcelLockerFirst, Action.Store, parcel).Execute().GetResult();
 
-        // tu będzie mediator
-        Parcel depositedParcelToIntermediateStorage = new StoreParcelCommand(parcelLockerFirst, Action.PickUp, depositedParcel).Execute().GetResult();
-        Parcel parcelInIntermediateStorage = new StoreParcelCommand(intermediateStorage, Action.Store, depositedParcelToIntermediateStorage).Execute().GetResult();
+        MediatorCourier mediatorCourier = new MediatorCourier();
+        Parcel parcelInIntermediateStorage = mediatorCourier.MoveParcel(parcelLockerFirst, intermediateStorage, depositedParcel);
+        Parcel parcelInReceivingLocker = mediatorCourier.MoveParcel(intermediateStorage, parcelLockerSecond, parcelInIntermediateStorage);
 
-        Parcel parcelFromIntermediateStorage = new StoreParcelCommand(intermediateStorage, Action.PickUp, parcelInIntermediateStorage).Execute().GetResult();
-        Parcel parcelInReceivingLocker = new StoreParcelCommand(parcelLockerSecond, Action.Store, parcelFromIntermediateStorage).Execute().GetResult();
-        // tu będzie mediator
-        
         Parcel parcelDelivered = new StoreParcelCommand(parcelLockerSecond, Action.PickUp, parcelInReceivingLocker).Execute().GetResult();
     }
 }

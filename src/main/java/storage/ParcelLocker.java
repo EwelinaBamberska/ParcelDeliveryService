@@ -88,6 +88,7 @@ public class ParcelLocker implements StoragePlace {
     @Override
     public Parcel storeParcel(Parcel parcel) {
         Module module = findModuleForParcelSize(parcel.getSize());
+        parcelIdToModuleId.put(parcel.getId(), module.getId());
         Parcel parcelStored = module.storeParcel(parcel);
         Event event = new Event(LocalDate.now(), this, EventType.ARRIVAL, parcel.getId());
 

@@ -20,11 +20,15 @@ public class StoreParcelCommand implements ICommandResult<Parcel, StoreParcelCom
         switch(action) {
             case Store:
                 result = storagePlace.storeParcel(parcel);
+                break;
             case PickUp:
                 result = storagePlace.pickUpParcel(parcel.getId());
+                break;
             default:
                 result = null;
         }
+
+        return this;
     }
 
     @Override
