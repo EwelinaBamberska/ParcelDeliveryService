@@ -10,22 +10,22 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ParcelLocker implements StoragePlace {
+public class ParcelLocker implements StoragePlace, LockerPart {
 
     @Getter
     private final int id;
     private String physicalAddress;
     private final List<Event> history;
-    private final Map<Integer, Module> modules;
+    private final Map<Integer, LockerPart> parts;
     private final Map<UUID, Integer> parcelIdToModuleId;
 
 
-    public ParcelLocker(int id, String physicalAddress, Collection<Module> modules) {
+    public ParcelLocker(int id, String physicalAddress, Collection<LockerPart> parts) {
         this.id = id;
         this.physicalAddress = physicalAddress;
-        this.modules = new HashMap<>(modules.size());
-        for (Module module : modules) {
-            this.modules.put(module.getId(), module);
+        this.parts = new HashMap<>(parts.size());
+        for (LockerPart part : parts) {
+            this.parts.put(part.getId(), part);
         }
 
         history = new LinkedList<>();
@@ -36,20 +36,11 @@ public class ParcelLocker implements StoragePlace {
         return history;
     }
 
-    public Integer calculateExpectedOccupancy(Date date) {
 
-        return null;
-    }
-
-    public List<Slot> calculateAvailability(Date date) {
-
-        return null;
-    }
-
-    private Module findModuleForParcelSize(Size size) {
-        return modules.values().stream()
-                .filter(Module::hasFreeSlot)
-                .filter(module -> module.getSize().compareTo(size) >= 0).min(Comparator.comparing(Module::getSize))
+    private LockerPart findPlaceForParcelSize(Size size) {
+        return parts.values().stream()
+                .filter(LockerPart::hasFreeSlot)
+                .filter(part -> part.getSize().compareTo(size) >= 0).min(Comparator.comparing(LockerPart::getSize))
                 .orElseThrow(() -> new RuntimeException("There is no empty slot for given size"));
     }
 
@@ -66,7 +57,7 @@ public class ParcelLocker implements StoragePlace {
 
     @Override
     public Parcel pickUpParcel(UUID parcelId) {
-        Parcel parcel = modules.get(parcelIdToModuleId.remove(parcelId)).collectParcel(parcelId);
+        Parcel parcel = parts.get(parcelIdToModuleId.remove(parcelId)).pickUpParcel(parcelId);
         Event event = new Event(LocalDate.now(), this, EventType.DEPARTURE, parcel.getId());
 
         history.add(event);
@@ -77,19 +68,19 @@ public class ParcelLocker implements StoragePlace {
 
     @Override
     public Parcel getParcel(UUID parcelId) {
-        return modules.get(parcelIdToModuleId.get(parcelId)).collectParcel(parcelId);
+        return parts.get(parcelIdToModuleId.get(parcelId)).pickUpParcel(parcelId);
     }
 
     @Override
     public List<Parcel> getAllParcels() {
-        return modules.values().stream().flatMap(module -> module.getAllParcels().stream()).collect(Collectors.toList());
+        return parts.values().stream().flatMap(part -> part.getAllParcels().stream()).collect(Collectors.toList());
     }
 
     @Override
     public Parcel storeParcel(Parcel parcel) {
-        Module module = findModuleForParcelSize(parcel.getSize());
-        parcelIdToModuleId.put(parcel.getId(), module.getId());
-        Parcel parcelStored = module.storeParcel(parcel);
+        LockerPart part = findPlaceForParcelSize(parcel.getSize());
+        parcelIdToModuleId.put(parcel.getId(), part.getId());
+        Parcel parcelStored = part.storeParcel(parcel);
         Event event = new Event(LocalDate.now(), this, EventType.ARRIVAL, parcel.getId());
 
         history.add(event);
@@ -100,6 +91,26 @@ public class ParcelLocker implements StoragePlace {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return !parts.values().stream().map(LockerPart::hasFreeSlot).collect(Collectors.toList()).contains(false);
+    }
+
+    @Override
+    public boolean hasFreeSlot() {
+        return parts.values().stream().map(LockerPart::hasFreeSlot).collect(Collectors.toList()).contains(true);
+    }
+
+    @Override
+    public Size getSize() {
+        return null;
+    }
+
+    public Integer calculateExpectedOccupancy(Date date) {
+
+        return null;
+    }
+
+    public List<Slot> calculateAvailability(Date date) {
+
+        return null;
     }
 }

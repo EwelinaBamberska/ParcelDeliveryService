@@ -4,7 +4,11 @@ import lombok.Getter;
 import parcel.Parcel;
 import parcel.Size;
 
-public class Slot {
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+public class Slot implements LockerPart {
 
     @Getter
     private final int id;
@@ -39,9 +43,24 @@ public class Slot {
         return parcel == null;
     }
 
-    public Parcel collectParcel() {
+    public Parcel pickUpParcel() {
         Parcel parcelCopy = parcel;
         parcel = null;
         return parcelCopy;
+    }
+
+    @Override
+    public boolean hasFreeSlot() {
+        return isEmpty();
+    }
+
+    @Override
+    public Parcel pickUpParcel(UUID parcelId) {
+        return pickUpParcel();
+    }
+
+    @Override
+    public List<Parcel> getAllParcels() {
+        return Arrays.asList(pickUpParcel());
     }
 }

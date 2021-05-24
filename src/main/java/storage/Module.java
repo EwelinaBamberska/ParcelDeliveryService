@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Module {
+public class Module implements LockerPart {
 
     @Getter
     private final int id;
@@ -41,14 +41,14 @@ public class Module {
         return parcel;
     }
 
-    public Parcel collectParcel(UUID parcelId)
+    public Parcel pickUpParcel(UUID parcelId)
     {
         Integer slotId = parcelIdToSlotId.remove(parcelId);
 
         if (slotId != null)
         {
             Slot slot = slots.get(slotId);
-            return slot.collectParcel();
+            return slot.pickUpParcel();
         }
         else
         {
