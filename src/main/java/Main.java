@@ -5,6 +5,7 @@ import parcel.Parcel;
 import parcel.Size;
 import payment.AdditionalService;
 import storage.IntermediateStorage;
+import storage.LockerPart;
 import storage.Module;
 import storage.ParcelLocker;
 import user_portal.UserPortal;
@@ -23,13 +24,13 @@ public class Main {
         UserPortal userPortal = new UserPortal();
         IntermediateStorage intermediateStorage = new IntermediateStorage();
 
-        Collection<Module> parcelLockerFirstModule = new ArrayList<>();
+        Collection<LockerPart> parcelLockerFirstModule = new ArrayList<>();
         parcelLockerFirstModule.add(new Module(1, Size.LARGE, 5));
         parcelLockerFirstModule.add(new Module(2, Size.MEDIUM, 10));
         parcelLockerFirstModule.add(new Module(3, Size.SMALL, 20));
         ParcelLocker parcelLockerFirst = new ParcelLocker(1, "Lewego 4", parcelLockerFirstModule);
 
-        Collection<Module> parcelLockerSecondModule = new ArrayList<>();
+        Collection<LockerPart> parcelLockerSecondModule = new ArrayList<>();
         parcelLockerSecondModule.add(new Module(1, Size.LARGE, 5));
         parcelLockerSecondModule.add(new Module(2, Size.MEDIUM, 10));
         parcelLockerSecondModule.add(new Module(3, Size.SMALL, 20));
