@@ -5,6 +5,7 @@ import parcel.Parcel;
 import parcel.Size;
 import payment.AdditionalService;
 import storage.ParcelLocker;
+import visitor.EventReport;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,5 +49,16 @@ public class UserPortal {
                 .filter(p -> parcelId.equals(p.getId()))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("There is no parcel with id " + parcelId));
+    }
+
+    public String getReportForParcel(UUID parcelId)
+    {
+        EventReport eventReport = new EventReport();
+        StringBuilder history = new StringBuilder();
+        for (Event event: getParcelById(parcelId).getEvents())
+        {
+            history.append(event.getStoragePlace().accept(eventReport, event));
+        }
+        return history.toString();
     }
 }

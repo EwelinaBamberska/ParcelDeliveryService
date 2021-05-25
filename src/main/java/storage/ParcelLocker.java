@@ -5,6 +5,7 @@ import event.EventType;
 import lombok.Getter;
 import parcel.Parcel;
 import parcel.Size;
+import visitor.StorageEventVisitor;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -92,6 +93,11 @@ public class ParcelLocker implements StoragePlace, LockerPart {
     @Override
     public boolean isEmpty() {
         return !parts.values().stream().map(LockerPart::hasFreeSlot).collect(Collectors.toList()).contains(false);
+    }
+
+    @Override
+    public String accept(StorageEventVisitor<String> visitor, Event event) {
+        return visitor.getEventInfo(this, event);
     }
 
     @Override

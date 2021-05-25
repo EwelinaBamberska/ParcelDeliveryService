@@ -1,6 +1,8 @@
 package storage;
 
+import event.Event;
 import parcel.Parcel;
+import visitor.StorageEventVisitor;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,4 +20,6 @@ public interface StoragePlace {
     Parcel storeParcel(Parcel parcel);
 
     boolean isEmpty();
+
+    String accept(StorageEventVisitor<String> visitor, Event event);
 }
